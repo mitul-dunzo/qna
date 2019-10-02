@@ -8,6 +8,7 @@ import (
 func main() {
 	config.SetupDatabase()
 	config.SetupNewRelic()
+	config.SetupRedis()
 
 	srv := server.New()
 	srv.ListenAndServe()
