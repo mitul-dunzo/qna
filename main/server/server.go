@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"qna/main/handler"
+	"qna/main/services"
 	"time"
 )
 
@@ -28,6 +29,7 @@ func New() *Server {
 
 func (s Server) setupComponents() {
 	s.HandleFunc("/", handler.Welcome).Methods(http.MethodGet)
+	s.HandleFunc("/login", services.Login).Methods(http.MethodPost)
 }
 
 func (s Server) ListenAndServe() {

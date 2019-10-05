@@ -25,8 +25,6 @@ func SetupDatabase() {
 	}
 	maxIdleConn := 10
 	maxOpenConn := 10
-	logMode := true
-	db.LogMode(logMode)
 	dbConn = db
 	db.DB().SetMaxIdleConns(maxIdleConn)
 	db.DB().SetMaxOpenConns(maxOpenConn)

@@ -3,7 +3,12 @@ package config
 import (
 	r "github.com/go-redis/redis"
 	"github.com/sirupsen/logrus"
+	"time"
 )
+
+type Redis struct {
+	*r.Client
+}
 
 var redis *r.Client
 
@@ -19,4 +24,13 @@ func SetupRedis() {
 	}
 	logrus.Info("Successfully connected to redis: ", pong)
 	redis = client
+}
+
+func Save(key string, value string, t time.Duration) error {
+	err := redis.Set(key, value, t).Err()
+	if err != nil {
+		logrus.Error("Redis: Couldn't save ", value, " for ", key)
+		return err
+	}
+	return nil
 }
