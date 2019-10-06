@@ -10,6 +10,6 @@ func main() {
 	config.SetupNewRelic()
 	config.SetupRedis()
 
-	srv := server.New()
+	srv := server.New(config.InitializeApp)
 	srv.ListenAndServe()
 }

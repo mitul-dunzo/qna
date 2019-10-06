@@ -29,3 +29,7 @@ func SetupDatabase() {
 	db.DB().SetMaxIdleConns(maxIdleConn)
 	db.DB().SetMaxOpenConns(maxOpenConn)
 }
+
+func GetDB() *gorm.DB {
+	return dbConn
+}

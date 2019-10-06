@@ -6,8 +6,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
-	"qna/main/handler"
-	"qna/main/services"
 	"time"
 )
 
@@ -16,20 +14,15 @@ type Server struct {
 	Address string
 }
 
-func New() *Server {
+func New(route func(router *mux.Router)) *Server {
 	r := mux.NewRouter()
 	addr := "0.0.0.0:8000"
 	s := Server{
 		Router:  r,
 		Address: addr,
 	}
-	s.setupComponents()
+	route(r)
 	return &s
-}
-
-func (s Server) setupComponents() {
-	s.HandleFunc("/", handler.Welcome).Methods(http.MethodGet)
-	s.HandleFunc("/login", services.Login).Methods(http.MethodPost)
 }
 
 func (s Server) ListenAndServe() {
