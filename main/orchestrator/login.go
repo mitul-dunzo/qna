@@ -76,7 +76,7 @@ func (orch *LoginOrchestrator) verifyOtp(w http.ResponseWriter, r *http.Request)
 
 	userDetails, err := orch.otpService.ValidateUser(otpResult.PhoneNumber, otpResult.Otp)
 	if err != nil {
-		if err.Error() == "invalid otp" { // TODO: Use const
+		if err.Error() == services.InvalidOtp {
 			http.Error(w, "Invalid OTP", http.StatusUnauthorized)
 			return
 		}

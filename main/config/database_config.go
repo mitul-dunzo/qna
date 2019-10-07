@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var dbConn *gorm.DB
+var db *gorm.DB
 
 func SetupDatabase() {
 	user := "qna_admin"
@@ -19,17 +19,13 @@ func SetupDatabase() {
 
 	logrus.Info("Connecting to : {}", psqlConf)
 
-	db, err := gorm.Open("postgres", psqlConf)
+	dbConn, err := gorm.Open("postgres", psqlConf)
 	if err != nil {
 		logrus.Fatal("failed to connect database with error: ", err.Error())
 	}
-	maxIdleConn := 10
-	maxOpenConn := 10
-	dbConn = db
-	db.DB().SetMaxIdleConns(maxIdleConn)
-	db.DB().SetMaxOpenConns(maxOpenConn)
+	db = dbConn
 }
 
 func GetDB() *gorm.DB {
-	return dbConn
+	return db
 }

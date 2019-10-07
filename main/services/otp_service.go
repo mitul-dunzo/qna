@@ -17,6 +17,8 @@ type OtpService struct {
 	smsClient *clients.SmsClient
 }
 
+const InvalidOtp = "invalid otp"
+
 func NewOtpService(redis *r.Client, smsClient *clients.SmsClient) OtpService {
 	return OtpService{
 		redis:     redis,
@@ -63,7 +65,7 @@ func (service *OtpService) ValidateUser(phoneNumber string, otp string) (*dtos.U
 
 	if otp != details.Otp {
 		logrus.Error("OTP didn't match")
-		return nil, errors.New("invalid otp")
+		return nil, errors.New(InvalidOtp)
 	}
 
 	return details.UserDetails, nil
