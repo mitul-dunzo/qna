@@ -9,7 +9,8 @@ func main() {
 	config.SetupDatabase()
 	config.SetupNewRelic()
 	config.SetupRedis()
+	router := config.InitializeApp()
 
-	srv := server.New(config.InitializeApp)
+	srv := server.New(router)
 	srv.ListenAndServe()
 }

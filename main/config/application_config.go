@@ -7,7 +7,7 @@ import (
 	"qna/main/services"
 )
 
-func InitializeApp(mux *mux.Router) {
+func InitializeApp() func(mux *mux.Router) {
 	db := GetDB()
 	redis := GetRedis()
 
@@ -19,10 +19,11 @@ func InitializeApp(mux *mux.Router) {
 
 	loginOrchestrator := orchestrator.NewLoginOrchestrator(&otpService, &userService)
 
-	router := mux.PathPrefix("/auth").Subrouter()
-	if router != nil {
-		loginOrchestrator.Handle(router)
-		return
+	return func(mux *mux.Router) {
+		router := mux.PathPrefix("/auth").Subrouter()
+		if router != nil {
+			loginOrchestrator.Handle(router)
+			return
+		}
 	}
-
 }
