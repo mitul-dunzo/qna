@@ -55,7 +55,7 @@ func (service *OtpService) SendOtp(details *dtos.UserDetails) error {
 	return nil
 }
 
-func (service *OtpService) ValidateUser(phoneNumber string, otp string) (*dtos.UserDetails, error) {
+func (service *OtpService) ValidateOtp(phoneNumber string, otp string) (*dtos.UserDetails, error) {
 	var details dtos.UserOtp
 	err := service.redis.Get(phoneNumber).Scan(&details)
 	if err != nil {
