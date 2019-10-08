@@ -16,14 +16,19 @@ func InitializeApp() func(mux *mux.Router) {
 	jwtService := services.NewJwtService()
 	otpService := services.NewOtpService(redis, &smsClient)
 	userService := services.NewUserService(db, &jwtService)
+	questionService := services.NewQuestionService(db)
 
 	loginOrchestrator := orchestrator.NewLoginOrchestrator(&otpService, &userService)
+	authMiddleware := orchestrator.NewAuthenticationMiddleware(jwtService)
+	questionOrch := orchestrator.NewQuestionOrchestrator(&questionService)
 
 	return func(mux *mux.Router) {
-		router := mux.PathPrefix("/auth").Subrouter()
-		if router != nil {
-			loginOrchestrator.Handle(router)
-			return
-		}
+		mux.Use(authMiddleware.Check)
+
+		loginRouter := mux.PathPrefix("/auth").Subrouter()
+		loginOrchestrator.Handle(loginRouter)
+
+		questionRouter := mux.PathPrefix("/questions").Subrouter()
+		questionOrch.Handle(questionRouter)
 	}
 }
