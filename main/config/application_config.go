@@ -17,10 +17,11 @@ func InitializeApp() func(mux *mux.Router) {
 	otpService := services.NewOtpService(redis, &smsClient)
 	userService := services.NewUserService(db, &jwtService)
 	questionService := services.NewQuestionService(db)
+	answerService := services.NewAnswerService(db)
 
 	loginOrchestrator := orchestrator.NewLoginOrchestrator(&otpService, &userService)
 	authMiddleware := orchestrator.NewAuthenticationMiddleware(jwtService)
-	questionOrch := orchestrator.NewQuestionOrchestrator(&questionService)
+	questionOrch := orchestrator.NewQuestionOrchestrator(&questionService, &answerService)
 
 	return func(mux *mux.Router) {
 		mux.Use(authMiddleware.Check)

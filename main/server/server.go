@@ -21,6 +21,7 @@ func New(route func(router *mux.Router)) *Server {
 		Router:  r,
 		Address: addr,
 	}
+	r.Use()
 	route(r)
 	return &s
 }

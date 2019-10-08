@@ -32,7 +32,7 @@ func (orch *LoginOrchestrator) login(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	if err != nil {
 		logrus.Error("Couldn't read from body request: ", err.Error())
-		http.Error(w, err.Error(), 400)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -40,7 +40,7 @@ func (orch *LoginOrchestrator) login(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(b, &userDetails)
 	if err != nil {
 		logrus.Error("Couldn't unmarshal from body request: ", err.Error())
-		http.Error(w, err.Error(), 400)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -48,7 +48,7 @@ func (orch *LoginOrchestrator) login(w http.ResponseWriter, r *http.Request) {
 	err = orch.otpService.SendOtp(&userDetails)
 	if err != nil {
 		logrus.Error("Couldn't write to response: ", err.Error())
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
@@ -59,7 +59,7 @@ func (orch *LoginOrchestrator) verifyOtp(w http.ResponseWriter, r *http.Request)
 	defer r.Body.Close()
 	if err != nil {
 		logrus.Error("Couldn't read from body request: ", err.Error())
-		http.Error(w, err.Error(), 400)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -67,7 +67,7 @@ func (orch *LoginOrchestrator) verifyOtp(w http.ResponseWriter, r *http.Request)
 	err = json.Unmarshal(b, &otpResult)
 	if err != nil {
 		logrus.Error("Couldn't unmarshal from body request: ", err.Error())
-		http.Error(w, err.Error(), 400)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -78,14 +78,14 @@ func (orch *LoginOrchestrator) verifyOtp(w http.ResponseWriter, r *http.Request)
 			return
 		}
 		logrus.Error("Couldn't check otp: ", err.Error())
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	jwt, err := orch.userService.CreateUser(userDetails)
 	if err != nil {
 		logrus.Error("Couldn't create jwt: ", err.Error())
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -93,7 +93,7 @@ func (orch *LoginOrchestrator) verifyOtp(w http.ResponseWriter, r *http.Request)
 	output, err := json.Marshal(result)
 	if err != nil {
 		logrus.Error("Couldn't write to response: ", err.Error())
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("content-type", "application/json")
