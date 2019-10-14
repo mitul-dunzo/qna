@@ -1,9 +1,7 @@
 package dtos
 
-import "github.com/jinzhu/gorm"
-
 type Answer struct {
-	gorm.Model
+	ID         uint `gorm:"PRIMARY_KEY"`
 	QuestionId uint
 	UserId     uint
 	Text       string

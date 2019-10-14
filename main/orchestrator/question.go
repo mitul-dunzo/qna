@@ -25,15 +25,13 @@ func NewQuestionOrchestrator(q *services.QuestionService, a *services.AnswerServ
 
 func (orch *QuestionOrchestrator) Handle(r *mux.Router) {
 	r.HandleFunc("/", orch.getQuestions).Methods(http.MethodGet)
+	r.HandleFunc("/{id}", orch.getQuestion).Methods(http.MethodGet)
 	r.HandleFunc("/new/", orch.addQuestion).Methods(http.MethodPost)
 }
 
 func (orch *QuestionOrchestrator) getQuestions(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	pageString := queryParams.Get("page")
-
-	logrus.Debug(pageString)
-
 	pageNo, err := strconv.Atoi(pageString)
 	if err != nil {
 		logrus.Error("Couldn't get page number: ", err.Error())
@@ -74,8 +72,16 @@ func (orch *QuestionOrchestrator) addQuestion(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	userIdInterface := r.Context().Value("user_id")
+	userId, ok := userIdInterface.(uint)
+	if !ok {
+		logrus.Error("No user id present")
+		http.Error(w, "Something went wrong", http.StatusBadRequest)
+		return
+	}
+
 	ques := question.Question()
-	q, err := orch.q.AddQuestion(&ques)
+	q, err := orch.q.AddQuestion(&ques, userId)
 	if err != nil {
 		logrus.Error("Couldn't save question: ", err.Error())
 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
@@ -87,6 +93,31 @@ func (orch *QuestionOrchestrator) addQuestion(w http.ResponseWriter, r *http.Req
 	if err != nil {
 		logrus.Error("Can't convert body into json: ", err.Error())
 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+	}
+
+	_, _ = w.Write(resp)
+}
+
+func (orch *QuestionOrchestrator) getQuestion(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	id, _ := strconv.Atoi(params["id"])
+
+	ques, err := orch.q.GetQuestion(uint(id))
+	if err != nil {
+		logrus.Error("Couldn't find question")
+		http.Error(w, "Question doesn't exist", http.StatusBadRequest)
+		return
+	}
+
+	ans := orch.a.GetAnswers(uint(id))
+	uans := dtos.UserAnswers(ans)
+	q := ques.UserQuestion(&uans)
+
+	resp, err := json.Marshal(&q)
+	if err != nil {
+		logrus.Error("Could't convert question to json: ", err.Error())
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		return
 	}
 
 	_, _ = w.Write(resp)

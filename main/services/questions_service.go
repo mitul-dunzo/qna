@@ -22,7 +22,8 @@ func (service *QuestionService) GetQuestions(page int) *[]dtos.Question {
 	return &questions
 }
 
-func (service *QuestionService) AddQuestion(q *dtos.Question) (*dtos.Question, error) {
+func (service *QuestionService) AddQuestion(q *dtos.Question, userId uint) (*dtos.Question, error) {
+	q.UserId = userId
 	err := service.db.Create(q).Error
 	if err != nil {
 		logrus.Error("Couldn't save question: ", err.Error())

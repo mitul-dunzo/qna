@@ -1,6 +1,7 @@
 package orchestrator
 
 import (
+	"context"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"qna/main/services"
@@ -45,7 +46,10 @@ func (orch *AuthenticationMiddleware) Check(next http.Handler) http.Handler {
 			return
 		}
 
-		r.Header.Add("user_id", string(userId))
+		logrus.Debug("userID: ", userId)
+
+		ctx := context.WithValue(r.Context(), "user_id", userId)
+		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
 	})
 }

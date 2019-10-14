@@ -39,17 +39,21 @@ func (service *JwtService) CreateToken(id uint) (string, error) {
 }
 
 func (service *JwtService) ValidateUser(tokenString string) (uint, error) {
-	claims := &dtos.Claims{}
-	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (i interface{}, e error) {
+	token, err := jwt.ParseWithClaims(tokenString, &dtos.Claims{}, func(token *jwt.Token) (i interface{}, e error) {
 		return jwtKey, nil
 	})
 	if err != nil {
+		logrus.Debug("Error is parsing claims")
 		return 0, err
 	}
 
-	if !token.Valid {
-		return 0, errors.New("unauthenticated user")
+	claims, ok := token.Claims.(*dtos.Claims)
+	if !ok || !token.Valid {
+		logrus.Error("toke not valid")
+		return 0, errors.New("wrong token")
 	}
+
+	logrus.Debug("User id is: ", claims.UserId)
 
 	return claims.UserId, nil
 }

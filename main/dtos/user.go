@@ -1,7 +1,5 @@
 package dtos
 
-import "github.com/jinzhu/gorm"
-
 type UserDetails struct {
 	PhoneNumber string `json:"phone_number"`
 	Name        string `json:"name"`
@@ -9,10 +7,8 @@ type UserDetails struct {
 }
 
 type User struct {
-	gorm.Model
 	*UserDetails
-	ID  uint
-	Jwt string
+	ID uint `gorm:"PRIMARY_KEY"`
 }
 
 func (User) TableName() string {
