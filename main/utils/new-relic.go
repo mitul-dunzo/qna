@@ -1,9 +1,11 @@
-package config
+package utils
 
 import (
+	"github.com/gorilla/mux"
 	newrelic "github.com/newrelic/go-agent"
 	"github.com/newrelic/go-agent/_integrations/nrlogrus"
 	"github.com/sirupsen/logrus"
+	"net/http"
 )
 
 var NewRelicApp newrelic.Application
@@ -21,4 +23,9 @@ func SetupNewRelic() {
 		panic(err)
 	}
 	NewRelicApp = app
+}
+
+func Instrument(v0mux *mux.Router, apiPath string, usersHandler func(w http.ResponseWriter, req *http.Request)) *mux.Route {
+
+	return v0mux.HandleFunc(newrelic.WrapHandleFunc(NewRelicApp, apiPath, usersHandler))
 }

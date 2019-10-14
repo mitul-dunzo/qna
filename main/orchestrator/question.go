@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"qna/main/dtos"
 	"qna/main/services"
+	"qna/main/utils"
 	"strconv"
 )
 
@@ -24,10 +25,10 @@ func NewQuestionOrchestrator(q *services.QuestionService, a *services.AnswerServ
 }
 
 func (orch *QuestionOrchestrator) Handle(r *mux.Router) {
-	r.HandleFunc("/", orch.getQuestions).Methods(http.MethodGet)
-	r.HandleFunc("/{id}", orch.getQuestion).Methods(http.MethodGet)
-	r.HandleFunc("/new/", orch.addQuestion).Methods(http.MethodPost)
-	r.HandleFunc("/{id}/answer/", orch.newAnswer).Methods(http.MethodPost)
+	utils.Instrument(r, "/", orch.getQuestions).Methods(http.MethodGet)
+	utils.Instrument(r, "/{id}", orch.getQuestion).Methods(http.MethodGet)
+	utils.Instrument(r, "/new/", orch.addQuestion).Methods(http.MethodPost)
+	utils.Instrument(r, "/{id}/answer/", orch.newAnswer).Methods(http.MethodPost)
 }
 
 func (orch *QuestionOrchestrator) getQuestions(w http.ResponseWriter, r *http.Request) {

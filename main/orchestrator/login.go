@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"qna/main/dtos"
 	"qna/main/services"
+	"qna/main/utils"
 )
 
 type LoginOrchestrator struct {
@@ -23,8 +24,8 @@ func NewLoginOrchestrator(otpService *services.OtpService, userService *services
 }
 
 func (orch *LoginOrchestrator) Handle(r *mux.Router) {
-	r.HandleFunc("/login", orch.login).Methods(http.MethodPost)
-	r.HandleFunc("/verify-otp", orch.verifyOtp).Methods(http.MethodPost)
+	utils.Instrument(r, "/login", orch.login).Methods(http.MethodPost)
+	utils.Instrument(r, "/verify-otp", orch.verifyOtp).Methods(http.MethodPost)
 }
 
 func (orch *LoginOrchestrator) login(w http.ResponseWriter, r *http.Request) {
