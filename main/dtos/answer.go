@@ -8,14 +8,22 @@ type Answer struct {
 }
 
 type UserAnswer struct {
-	ID   uint
-	Text string
+	ID   uint   `json:"id"`
+	Text string `json:"answer"`
 }
 
 func (a Answer) UserAnswer() UserAnswer {
 	return UserAnswer{
 		ID:   a.ID,
 		Text: a.Text,
+	}
+}
+
+func (a UserAnswer) Answer(questionId uint) Answer {
+	return Answer{
+		ID:         a.ID,
+		QuestionId: questionId,
+		Text:       a.Text,
 	}
 }
 

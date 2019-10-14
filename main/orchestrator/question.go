@@ -27,6 +27,7 @@ func (orch *QuestionOrchestrator) Handle(r *mux.Router) {
 	r.HandleFunc("/", orch.getQuestions).Methods(http.MethodGet)
 	r.HandleFunc("/{id}", orch.getQuestion).Methods(http.MethodGet)
 	r.HandleFunc("/new/", orch.addQuestion).Methods(http.MethodPost)
+	r.HandleFunc("/{id}/answer/", orch.newAnswer).Methods(http.MethodPost)
 }
 
 func (orch *QuestionOrchestrator) getQuestions(w http.ResponseWriter, r *http.Request) {
@@ -118,6 +119,52 @@ func (orch *QuestionOrchestrator) getQuestion(w http.ResponseWriter, r *http.Req
 		logrus.Error("Could't convert question to json: ", err.Error())
 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
 		return
+	}
+
+	_, _ = w.Write(resp)
+}
+
+func (orch *QuestionOrchestrator) newAnswer(w http.ResponseWriter, r *http.Request) {
+	userIdInterface := r.Context().Value("user_id")
+	userId, ok := userIdInterface.(uint)
+	if !ok {
+		logrus.Error("No user id present")
+		http.Error(w, "Something went wrong", http.StatusBadRequest)
+		return
+	}
+
+	params := mux.Vars(r)
+	id, _ := strconv.Atoi(params["id"])
+
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		logrus.Error("Couldn't read from body request: ", err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var answer dtos.UserAnswer
+	err = json.Unmarshal(b, &answer)
+	if err != nil {
+		logrus.Error("Incorrect format of answer: ", err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	ans := answer.Answer(uint(id))
+	a, err := orch.a.NewAnswer(&ans, userId)
+	if err != nil {
+		logrus.Error("Failed to save answer: ", err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	answer = a.UserAnswer()
+	resp, err := json.Marshal(answer)
+	if err != nil {
+		logrus.Error("Can't convert body into json: ", err.Error())
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
 	}
 
 	_, _ = w.Write(resp)
