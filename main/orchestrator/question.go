@@ -110,7 +110,7 @@ func (orch *QuestionOrchestrator) getQuestion(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	ans := orch.a.GetAnswers(uint(id))
+	ans := orch.a.GetAnswersForQuestion(uint(id))
 	uans := dtos.UserAnswers(ans)
 	q := ques.UserQuestion(&uans)
 

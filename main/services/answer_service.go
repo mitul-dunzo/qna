@@ -14,9 +14,9 @@ func NewAnswerService(db *gorm.DB) AnswerService {
 	return AnswerService{db: db}
 }
 
-func (service *AnswerService) GetAnswers(id uint) []dtos.Answer {
+func (service *AnswerService) GetAnswersForQuestion(id uint) []dtos.Answer {
 	var answers []dtos.Answer
-	service.db.Find(&answers)
+	service.db.Where("question_id = ?", id).Find(&answers)
 	return answers
 }
 
@@ -28,4 +28,17 @@ func (service *AnswerService) NewAnswer(answer *dtos.Answer, userId uint) (*dtos
 		return nil, err
 	}
 	return answer, nil
+}
+
+func (service *AnswerService) GetAnswer(id uint) (*dtos.Answer, error) {
+	ans := dtos.Answer{
+		ID: id,
+	}
+	err := service.db.First(ans, ans).Error
+	if err != nil {
+		logrus.Error("Couldn't find answer: ", err.Error())
+		return nil, err
+	}
+
+	return &ans, nil
 }

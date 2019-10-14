@@ -18,10 +18,13 @@ func InitializeApp() func(mux *mux.Router) {
 	userService := services.NewUserService(db, &jwtService)
 	questionService := services.NewQuestionService(db)
 	answerService := services.NewAnswerService(db)
+	voteService := services.NewVoteService(db)
 
 	loginOrchestrator := orchestrator.NewLoginOrchestrator(&otpService, &userService)
 	authMiddleware := orchestrator.NewAuthenticationMiddleware(jwtService)
 	questionOrch := orchestrator.NewQuestionOrchestrator(&questionService, &answerService)
+
+	voteOrch := orchestrator.NewVoteOrchestrator(&questionService, &answerService, &voteService)
 
 	return func(mux *mux.Router) {
 		mux.Use(authMiddleware.Check)
@@ -31,5 +34,8 @@ func InitializeApp() func(mux *mux.Router) {
 
 		questionRouter := mux.PathPrefix("/questions").Subrouter()
 		questionOrch.Handle(questionRouter)
+
+		voteRouter := mux.PathPrefix("/vote").Subrouter()
+		voteOrch.Handle(voteRouter)
 	}
 }
