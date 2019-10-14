@@ -19,9 +19,9 @@ func NewVoteService(db *gorm.DB) VoteService {
 
 func (s *VoteService) validateVote(vote int) (string, error) {
 	if vote == 1 {
-		return "upvote", nil
+		return dtos.Upvote, nil
 	} else if vote == -1 {
-		return "downvote", nil
+		return dtos.Downvote, nil
 	}
 	return "", errors.New("invalid vote")
 }

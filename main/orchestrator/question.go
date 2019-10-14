@@ -85,7 +85,7 @@ func (orch *QuestionOrchestrator) addQuestion(w http.ResponseWriter, r *http.Req
 	q, err := orch.q.AddQuestion(&ques, userId)
 	if err != nil {
 		logrus.Error("Couldn't save question: ", err.Error())
-		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
