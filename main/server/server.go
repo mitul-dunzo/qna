@@ -16,7 +16,7 @@ type Server struct {
 
 func New(route func(router *mux.Router)) *Server {
 	r := mux.NewRouter()
-	addr := "0.0.0.0:8000"
+	addr := os.Getenv("ServerAddress")
 	s := Server{
 		Router:  r,
 		Address: addr,

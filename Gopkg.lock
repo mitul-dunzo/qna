@@ -107,6 +107,14 @@
   version = "v1.4.2"
 
 [[projects]]
+  digest = "1:f4b32291cad5efac2bfdba89ccde6aa04618b62ce06c1a571da2dc4f3f2677fb"
+  name = "github.com/subosito/gotenv"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "2ef7124db659d49edac6aa459693a15ae36c671a"
+  version = "v1.2.0"
+
+[[projects]]
   branch = "master"
   digest = "1:84ed4fd3f7c52941feec4832e385f61377a01b4c98a0f868f16f10c2469fc0fe"
   name = "golang.org/x/sys"
@@ -127,6 +135,7 @@
     "github.com/newrelic/go-agent",
     "github.com/newrelic/go-agent/_integrations/nrlogrus",
     "github.com/sirupsen/logrus",
+    "github.com/subosito/gotenv",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

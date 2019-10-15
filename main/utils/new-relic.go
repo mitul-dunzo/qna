@@ -6,13 +6,14 @@ import (
 	"github.com/newrelic/go-agent/_integrations/nrlogrus"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"os"
 )
 
 var NewRelicApp newrelic.Application
 
 func SetupNewRelic() {
-	appName := "qna"
-	license := "eu01xx84b0eb9c65dcdf3b45c53380770e434f3f"
+	appName := os.Getenv("NewRelicAppName")
+	license := os.Getenv("NewRelicLicenseKey")
 	config := newrelic.NewConfig(appName, license)
 	logrus.SetLevel(logrus.DebugLevel)
 	config.Logger = nrlogrus.StandardLogger()

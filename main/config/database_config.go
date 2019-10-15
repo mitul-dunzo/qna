@@ -5,17 +5,18 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/sirupsen/logrus"
+	"os"
 )
 
 var db *gorm.DB
 
 func SetupDatabase() {
-	user := "qna_admin"
-	password := "admin_1234"
-	database := "qna"
-	host := "0.0.0.0"
-	port := 5432
-	psqlConf := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, database)
+	user := os.Getenv("PostgresUser")
+	password := os.Getenv("PostgresPassword")
+	database := os.Getenv("PostgresDBName")
+	host := os.Getenv("PostgresHost")
+	port := os.Getenv("PostgresPort")
+	psqlConf := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, database)
 
 	logrus.Info("Connecting to : {}", psqlConf)
 

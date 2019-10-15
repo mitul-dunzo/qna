@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	config.SetupEnv()
 	config.SetupDatabase()
 	config.SetupRedis()
 	utils.SetupNewRelic()

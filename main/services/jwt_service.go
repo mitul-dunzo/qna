@@ -4,11 +4,12 @@ import (
 	"errors"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/sirupsen/logrus"
+	"os"
 	"qna/main/dtos"
 	"time"
 )
 
-var jwtKey = []byte("7730DE6E5C013DC1C64E3DBE791460CE88C06D4B970EADD70480EE46E4CFE60B")
+var jwtKey = []byte(os.Getenv("JWTKey"))
 
 type JwtService struct {
 }

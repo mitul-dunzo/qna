@@ -3,12 +3,13 @@ package config
 import (
 	r "github.com/go-redis/redis"
 	"github.com/sirupsen/logrus"
+	"os"
 )
 
 var redis *r.Client
 
 func SetupRedis() {
-	address := "127.0.0.1:6379"
+	address := os.Getenv("RedisAddress")
 
 	client := r.NewClient(&r.Options{
 		Addr: address,

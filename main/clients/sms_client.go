@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -20,9 +21,9 @@ func (SmsClient) SendOtpSms(otp string, number string) error {
 	message := fmt.Sprintf("This is a test message being sent using Exotel with a (%s) and (%d). If this is being abused, report to 08088919888", otp, 1)
 	requestData := createSmsRequest(number, message)
 
-	exotelApiKey := "cbc479b06e98e31fd741413f4a78b521abfb4c39c5030859"
-	exotelApiToken := "d6cb2e61f39046bbe32327665c2e7b3afe46a0a45137002a"
-	exotelSid := "mitultest1"
+	exotelApiKey := os.Getenv("ExotelAPIKey")
+	exotelApiToken := os.Getenv("ExotelAPIToken")
+	exotelSid := os.Getenv("ExotelSID")
 
 	urlString := fmt.Sprintf("https://%s:%s@api.exotel.com/v1/Accounts/%s/Sms/send.json", exotelApiKey, exotelApiToken, exotelSid)
 
@@ -57,7 +58,7 @@ func (SmsClient) SendOtpSms(otp string, number string) error {
 
 func createSmsRequest(to string, body string) url.Values {
 	data := url.Values{}
-	data.Set("From", "080-471-12716")
+	data.Set("From", os.Getenv("ExotelPhoneNumber"))
 	data.Set("To", to)
 	data.Set("Body", body)
 	data.Set("Priority", "high")
