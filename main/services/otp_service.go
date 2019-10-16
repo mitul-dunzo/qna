@@ -44,11 +44,11 @@ func (service *OtpService) SendOtp(details *dtos.UserDetails) error {
 		return err
 	}
 
-	// err = service.smsClient.SendOtpSms(otp, details.PhoneNumber)
-	// if err != nil {
-	// 	logrus.Error("Couldn't send sms: ", err.Error())
-	// 	return err
-	// }
+	err = service.smsClient.SendOtpSms(otp, details.PhoneNumber)
+	if err != nil {
+		logrus.Error("Couldn't send sms: ", err.Error())
+		return err
+	}
 
 	logrus.Debug("OTP is ", otp)
 
