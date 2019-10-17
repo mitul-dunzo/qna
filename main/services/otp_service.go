@@ -1,33 +1,32 @@
 package services
 
 import (
-	"crypto/rand"
 	"errors"
 	r "github.com/go-redis/redis"
 	"github.com/sirupsen/logrus"
-	"math/big"
 	"qna/main/clients"
 	"qna/main/dtos"
-	"strconv"
 	"time"
 )
 
 type OtpService struct {
-	redis     *r.Client
-	smsClient *clients.SmsClient
+	redis          *r.Client
+	smsClient      clients.ISmsClient
+	randNumService IRandNumService
 }
 
 const InvalidOtp = "invalid otp"
 
-func NewOtpService(redis *r.Client, smsClient *clients.SmsClient) OtpService {
+func NewOtpService(redis *r.Client, smsClient clients.ISmsClient, randNumService IRandNumService) OtpService {
 	return OtpService{
-		redis:     redis,
-		smsClient: smsClient,
+		redis:          redis,
+		smsClient:      smsClient,
+		randNumService: randNumService,
 	}
 }
 
 func (service *OtpService) SendOtp(details *dtos.UserDetails) error {
-	otp, err := getRandNum()
+	otp, err := service.randNumService.GetRandNum()
 	if err != nil {
 		logrus.Error("Couldn't create OTP: ", err.Error())
 		return err
@@ -69,13 +68,4 @@ func (service *OtpService) ValidateOtp(phoneNumber string, otp string) (*dtos.Us
 	}
 
 	return details.UserDetails, nil
-}
-
-func getRandNum() (string, error) {
-	nBig, e := rand.Int(rand.Reader, big.NewInt(8999))
-	if e != nil {
-		logrus.Error("Couldn't generate a random number: ", e.Error())
-		return "", e
-	}
-	return strconv.FormatInt(nBig.Int64()+1000, 10), nil
 }

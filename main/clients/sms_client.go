@@ -11,9 +11,13 @@ import (
 	"strings"
 )
 
+type ISmsClient interface {
+	SendOtpSms(otp string, number string) error
+}
+
 type SmsClient struct{}
 
-func NewSmsClient() SmsClient {
+func NewSmsClient() ISmsClient {
 	return SmsClient{}
 }
 

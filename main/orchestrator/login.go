@@ -45,7 +45,7 @@ func (orch *LoginOrchestrator) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// We should add a checks on email and phone number here.
+	// We should add checks on email and phone number here.
 	err = orch.otpService.SendOtp(&userDetails)
 	if err != nil {
 		logrus.Error("Couldn't write to response: ", err.Error())
