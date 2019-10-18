@@ -9,14 +9,14 @@ import (
 )
 
 type AuthenticationMiddleware struct {
-	JwtService services.JwtService
+	JwtService services.IJwtService
 }
 
 var openApis = []string{
 	"/auth",
 }
 
-func NewAuthenticationMiddleware(jwtService services.JwtService) AuthenticationMiddleware {
+func NewAuthenticationMiddleware(jwtService services.IJwtService) AuthenticationMiddleware {
 	return AuthenticationMiddleware{JwtService: jwtService}
 }
 

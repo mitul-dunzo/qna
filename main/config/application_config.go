@@ -16,7 +16,7 @@ func InitializeApp() func(mux *mux.Router) {
 	jwtService := services.NewJwtService()
 	randNumService := services.NewRandNumService()
 	otpService := services.NewOtpService(redis, smsClient, randNumService)
-	userService := services.NewUserService(db, &jwtService)
+	userService := services.NewUserService(db, jwtService)
 	questionService := services.NewQuestionService(db)
 	answerService := services.NewAnswerService(db)
 	voteService := services.NewVoteService(db)

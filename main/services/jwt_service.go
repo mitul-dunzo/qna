@@ -11,11 +11,16 @@ import (
 
 var jwtKey = []byte(os.Getenv("JWTKey"))
 
+type IJwtService interface {
+	CreateToken(id uint) (string, error)
+	ValidateUser(tokenString string) (uint, error)
+}
+
 type JwtService struct {
 }
 
-func NewJwtService() JwtService {
-	return JwtService{}
+func NewJwtService() IJwtService {
+	return &JwtService{}
 }
 
 func (service *JwtService) CreateToken(id uint) (string, error) {

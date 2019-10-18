@@ -8,10 +8,10 @@ import (
 
 type UserService struct {
 	db  *gorm.DB
-	jwt *JwtService
+	jwt IJwtService
 }
 
-func NewUserService(db *gorm.DB, jwt *JwtService) UserService {
+func NewUserService(db *gorm.DB, jwt IJwtService) UserService {
 	return UserService{
 		db:  db,
 		jwt: jwt,
@@ -27,8 +27,6 @@ func (service *UserService) CreateUser(details *dtos.UserDetails) (string, error
 		logrus.Error("Couldn't find user: ", err.Error())
 		return "", err
 	}
-
-	logrus.Debug("User id: ", user.ID)
 
 	token, err := service.jwt.CreateToken(user.ID)
 	if err != nil {
