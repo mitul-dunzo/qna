@@ -1,6 +1,7 @@
 package test
 
 import (
+	"github.com/alicebob/miniredis"
 	"github.com/go-redis/redis"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
@@ -17,6 +18,7 @@ type OtpServiceTestSuite struct {
 	smsClient      *mocks.MockISmsClient
 	randNumService *mocks.MockIRandNumService
 	redis          *redis.Client
+	miniRedis      *miniredis.Miniredis
 	service        services.OtpService
 }
 
@@ -26,13 +28,13 @@ func (suite *OtpServiceTestSuite) SetupTest() {
 func (suite *OtpServiceTestSuite) BeforeTest(suiteName, testName string) {
 	suite.ctrl = gomock.NewController(suite.T())
 	suite.smsClient = mocks.NewMockISmsClient(suite.ctrl)
-	suite.redis = mocks.NewMockRedis()
+	suite.redis, suite.miniRedis = mocks.NewMockRedis()
 	suite.randNumService = mocks.NewMockIRandNumService(suite.ctrl)
 	suite.service = services.NewOtpService(suite.redis, suite.smsClient, suite.randNumService)
 }
 
 func (suite *OtpServiceTestSuite) AfterTest(suiteName, testName string) {
-	mocks.StopMockRedis()
+	suite.miniRedis.Close()
 	suite.ctrl.Finish()
 }
 

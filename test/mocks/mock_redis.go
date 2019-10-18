@@ -5,20 +5,13 @@ import (
 	"github.com/go-redis/redis"
 )
 
-var mr *miniredis.Miniredis
-
-func NewMockRedis() *redis.Client {
-	s, err := miniredis.Run()
+func NewMockRedis() (*redis.Client, *miniredis.Miniredis) {
+	mr, err := miniredis.Run()
 	if err != nil {
 		panic(err)
 	}
 	client := redis.NewClient(&redis.Options{
-		Addr: s.Addr(),
+		Addr: mr.Addr(),
 	})
-	mr = s
-	return client
-}
-
-func StopMockRedis() {
-	mr.Close()
+	return client, mr
 }
