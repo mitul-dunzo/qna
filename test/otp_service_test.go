@@ -4,7 +4,6 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
-	"qna/main/config"
 	"qna/main/dtos"
 	"qna/main/services"
 	"qna/test/mocks"
@@ -27,15 +26,13 @@ func (suite *OtpServiceTestSuite) SetupTest() {
 func (suite *OtpServiceTestSuite) BeforeTest(suiteName, testName string) {
 	suite.ctrl = gomock.NewController(suite.T())
 	suite.smsClient = mocks.NewMockISmsClient(suite.ctrl)
-
-	// Ideally we should mock redis over here.
-	config.SetupRedis()
-	suite.redis = config.GetRedis()
+	suite.redis = mocks.NewMockRedis()
 	suite.randNumService = mocks.NewMockIRandNumService(suite.ctrl)
 	suite.service = services.NewOtpService(suite.redis, suite.smsClient, suite.randNumService)
 }
 
 func (suite *OtpServiceTestSuite) AfterTest(suiteName, testName string) {
+	mocks.StopMockRedis()
 	suite.ctrl.Finish()
 }
 
