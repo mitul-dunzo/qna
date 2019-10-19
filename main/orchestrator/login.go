@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
-	"io/ioutil"
 	"net/http"
 	"qna/main/constants"
 	"qna/main/dtos"
@@ -30,19 +29,10 @@ func (orch *LoginOrchestrator) Handle(r *mux.Router) {
 }
 
 func (orch *LoginOrchestrator) login(w http.ResponseWriter, r *http.Request) {
-	b, err := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	if err != nil {
-		logrus.Error("Couldn't read from body request: ", err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
 	var userDetails dtos.UserDetails
-	err = json.Unmarshal(b, &userDetails)
+	err := utils.ReadHTTPBody(r, &userDetails)
 	if err != nil {
-		logrus.Error("Couldn't unmarshal from body request: ", err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		utils.SendBadRequestError(w)
 		return
 	}
 
@@ -57,19 +47,10 @@ func (orch *LoginOrchestrator) login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (orch *LoginOrchestrator) verifyOtp(w http.ResponseWriter, r *http.Request) {
-	b, err := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	if err != nil {
-		logrus.Error("Couldn't read from body request: ", err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
 	var otpResult dtos.OtpData
-	err = json.Unmarshal(b, &otpResult)
+	err := utils.ReadHTTPBody(r, &otpResult)
 	if err != nil {
-		logrus.Error("Couldn't unmarshal from body request: ", err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		utils.SendBadRequestError(w)
 		return
 	}
 

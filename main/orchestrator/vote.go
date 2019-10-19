@@ -1,10 +1,8 @@
 package orchestrator
 
 import (
-	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
-	"io/ioutil"
 	"net/http"
 	"qna/main/constants"
 	"qna/main/dtos"
@@ -31,27 +29,16 @@ func (orch *VoteOrchestrator) Handle(r *mux.Router) {
 }
 
 func (orch *VoteOrchestrator) vote(w http.ResponseWriter, r *http.Request) {
-	userIdInterface := r.Context().Value("user_id")
-	userId, ok := userIdInterface.(uint)
-	if !ok {
-		logrus.Error("No user id present")
-		http.Error(w, "Something went wrong", http.StatusBadRequest)
-		return
-	}
-
-	b, err := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
+	userId, err := utils.GetUserId(r)
 	if err != nil {
-		logrus.Error("Couldn't read from body request: ", err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		utils.SendBadRequestError(w)
 		return
 	}
 
 	var vote dtos.UserVote
-	err = json.Unmarshal(b, &vote)
+	err = utils.ReadHTTPBody(r, &vote)
 	if err != nil {
-		logrus.Error("Incorrect format of answer: ", err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		utils.SendBadRequestError(w)
 		return
 	}
 

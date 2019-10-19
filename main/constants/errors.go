@@ -3,6 +3,7 @@ package constants
 import "errors"
 
 var (
+	NoUserIdPresent          = errors.New("no user id")
 	WrongTokenError          = errors.New("wrong token")
 	NotEnoughVotesError      = errors.New("user doesn't have enough votes")
 	InvalidVoteError         = errors.New("invalid vote")

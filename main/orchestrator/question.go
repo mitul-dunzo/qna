@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
-	"io/ioutil"
 	"net/http"
 	"qna/main/constants"
 	"qna/main/dtos"
@@ -59,27 +58,16 @@ func (orch *QuestionOrchestrator) getQuestions(w http.ResponseWriter, r *http.Re
 }
 
 func (orch *QuestionOrchestrator) addQuestion(w http.ResponseWriter, r *http.Request) {
-	b, err := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
+	userId, err := utils.GetUserId(r)
 	if err != nil {
-		logrus.Error("Couldn't read from body request: ", err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		utils.SendBadRequestError(w)
 		return
 	}
 
 	var question dtos.UserQuestion
-	err = json.Unmarshal(b, &question)
+	err = utils.ReadHTTPBody(r, &question)
 	if err != nil {
-		logrus.Error("Incorrect format of question: ", err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	userIdInterface := r.Context().Value("user_id")
-	userId, ok := userIdInterface.(uint)
-	if !ok {
-		logrus.Error("No user id present")
-		http.Error(w, "Something went wrong", http.StatusBadRequest)
+		utils.SendBadRequestError(w)
 		return
 	}
 
@@ -127,30 +115,19 @@ func (orch *QuestionOrchestrator) getQuestion(w http.ResponseWriter, r *http.Req
 }
 
 func (orch *QuestionOrchestrator) newAnswer(w http.ResponseWriter, r *http.Request) {
-	userIdInterface := r.Context().Value("user_id")
-	userId, ok := userIdInterface.(uint)
-	if !ok {
-		logrus.Error("No user id present")
-		http.Error(w, "Something went wrong", http.StatusBadRequest)
+	userId, err := utils.GetUserId(r)
+	if err != nil {
+		utils.SendBadRequestError(w)
 		return
 	}
 
 	params := mux.Vars(r)
 	id, _ := strconv.Atoi(params["id"])
 
-	b, err := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	if err != nil {
-		logrus.Error("Couldn't read from body request: ", err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
 	var answer dtos.UserAnswer
-	err = json.Unmarshal(b, &answer)
+	err = utils.ReadHTTPBody(r, &answer)
 	if err != nil {
-		logrus.Error("Incorrect format of answer: ", err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		utils.SendBadRequestError(w)
 		return
 	}
 
