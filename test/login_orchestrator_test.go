@@ -1,13 +1,11 @@
 package test
 
 import (
-	"bytes"
 	"encoding/json"
 	"github.com/golang/mock/gomock"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/suite"
 	"net/http"
-	"net/http/httptest"
 	"qna/main/orchestrator"
 	"qna/test/mocks"
 	"qna/test/utils"
@@ -49,11 +47,7 @@ func (suite *LoginOrchestratorTestSuite) TestLogin() {
 
 	suite.otpService.EXPECT().SendOtp(details).Return(nil).Times(1)
 
-	data, _ := json.Marshal(details)
-	r, _ := http.NewRequest(http.MethodPost, "/auth/login", bytes.NewBuffer(data))
-
-	w := httptest.NewRecorder()
-	suite.router.ServeHTTP(w, r)
+	w := utils.SendPostRequest(suite.router, "/auth/login", details)
 
 	suite.Equal(w.Code, http.StatusOK)
 }
@@ -66,11 +60,7 @@ func (suite *LoginOrchestratorTestSuite) TestVerifyOtp() {
 	suite.otpService.EXPECT().ValidateOtp(requestParams.PhoneNumber, requestParams.Otp).Return(userDetails, nil).Times(1)
 	suite.userService.EXPECT().CreateUser(userDetails).Return(jwt, nil).Times(1)
 
-	data, _ := json.Marshal(requestParams)
-	r, _ := http.NewRequest(http.MethodPost, "/auth/verify-otp", bytes.NewBuffer(data))
-
-	w := httptest.NewRecorder()
-	suite.router.ServeHTTP(w, r)
+	w := utils.SendPostRequest(suite.router, "/auth/verify-otp", requestParams)
 
 	suite.Equal(w.Code, http.StatusOK)
 
