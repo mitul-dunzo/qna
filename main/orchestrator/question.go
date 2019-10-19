@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
+	"qna/main/constants"
 	"qna/main/dtos"
 	"qna/main/services"
 	"qna/main/utils"
@@ -25,10 +26,10 @@ func NewQuestionOrchestrator(q *services.QuestionService, a *services.AnswerServ
 }
 
 func (orch *QuestionOrchestrator) Handle(r *mux.Router) {
-	utils.Instrument(r, "/", orch.getQuestions).Methods(http.MethodGet)
-	utils.Instrument(r, "/{id}", orch.getQuestion).Methods(http.MethodGet)
-	utils.Instrument(r, "/new/", orch.addQuestion).Methods(http.MethodPost)
-	utils.Instrument(r, "/{id}/answer/", orch.newAnswer).Methods(http.MethodPost)
+	utils.Instrument(r, constants.GetQuestionsEp, orch.getQuestions).Methods(http.MethodGet)
+	utils.Instrument(r, constants.GetQuestionEp, orch.getQuestion).Methods(http.MethodGet)
+	utils.Instrument(r, constants.AddQuestionEp, orch.addQuestion).Methods(http.MethodPost)
+	utils.Instrument(r, constants.AddAnswerEp, orch.newAnswer).Methods(http.MethodPost)
 }
 
 func (orch *QuestionOrchestrator) getQuestions(w http.ResponseWriter, r *http.Request) {

@@ -1,13 +1,13 @@
 package clients
 
 import (
-	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
+	"qna/main/constants"
 	"strings"
 )
 
@@ -55,7 +55,7 @@ func (SmsClient) SendOtpSms(otp string, number string) error {
 	logrus.Info("Exotel API response: ", string(body))
 
 	if resp.StatusCode != 200 {
-		return errors.New("failed to send SMS")
+		return constants.FailedToSendSmsError
 	}
 	return nil
 }

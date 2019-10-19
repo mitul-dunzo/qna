@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
+	"qna/main/constants"
 	"qna/main/dtos"
 	"qna/main/services"
 	"qna/main/utils"
@@ -26,7 +27,7 @@ func NewVoteOrchestrator(q *services.QuestionService, a *services.AnswerService,
 }
 
 func (orch *VoteOrchestrator) Handle(r *mux.Router) {
-	utils.Instrument(r, "/", orch.vote).Methods(http.MethodPost)
+	utils.Instrument(r, constants.VoteEp, orch.vote).Methods(http.MethodPost)
 }
 
 func (orch *VoteOrchestrator) vote(w http.ResponseWriter, r *http.Request) {

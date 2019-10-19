@@ -1,10 +1,10 @@
 package services
 
 import (
-	"errors"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/sirupsen/logrus"
 	"os"
+	"qna/main/constants"
 	"qna/main/dtos"
 	"time"
 )
@@ -39,8 +39,6 @@ func (service *JwtService) CreateToken(id uint) (string, error) {
 		return "", err
 	}
 
-	logrus.Debug("JWT is ", tokenString)
-
 	return tokenString, nil
 }
 
@@ -49,17 +47,14 @@ func (service *JwtService) ValidateUser(tokenString string) (uint, error) {
 		return jwtKey, nil
 	})
 	if err != nil {
-		logrus.Debug("Error is parsing claims")
+		logrus.Debug("Error in parsing claims")
 		return 0, err
 	}
 
 	claims, ok := token.Claims.(*dtos.Claims)
 	if !ok || !token.Valid {
-		logrus.Error("toke not valid")
-		return 0, errors.New("wrong token")
+		return 0, constants.WrongTokenError
 	}
-
-	logrus.Debug("User id is: ", claims.UserId)
 
 	return claims.UserId, nil
 }

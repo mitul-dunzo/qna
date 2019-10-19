@@ -1,10 +1,5 @@
 package dtos
 
-const (
-	Upvote   = "upvote"
-	Downvote = "downvote"
-)
-
 type UserVote struct {
 	QuestionId uint `json:"question"`
 	AnswerId   uint `json:"answer"`

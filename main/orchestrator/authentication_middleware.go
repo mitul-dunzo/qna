@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"qna/main/constants"
 	"qna/main/services"
 	"strings"
 )
@@ -13,7 +14,7 @@ type AuthenticationMiddleware struct {
 }
 
 var openApis = []string{
-	"/auth",
+	constants.AuthPrefix,
 }
 
 func NewAuthenticationMiddleware(jwtService services.IJwtService) AuthenticationMiddleware {
@@ -45,8 +46,6 @@ func (orch *AuthenticationMiddleware) Check(next http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusForbidden)
 			return
 		}
-
-		logrus.Debug("userID: ", userId)
 
 		ctx := context.WithValue(r.Context(), "user_id", userId)
 		r = r.WithContext(ctx)

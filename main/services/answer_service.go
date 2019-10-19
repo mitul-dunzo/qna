@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
+	"qna/main/constants"
 	"qna/main/dtos"
 )
 
@@ -16,7 +17,7 @@ func NewAnswerService(db *gorm.DB) AnswerService {
 
 func (service *AnswerService) GetAnswersForQuestion(id uint) []dtos.Answer {
 	var answers []dtos.Answer
-	service.db.Where("question_id = ?", id).Find(&answers)
+	service.db.Where(constants.QuestionIdQuery, id).Find(&answers)
 	return answers
 }
 

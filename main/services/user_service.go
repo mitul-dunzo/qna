@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
+	"qna/main/constants"
 	"qna/main/dtos"
 )
 
@@ -26,7 +27,7 @@ func (service *UserService) CreateUser(details *dtos.UserDetails) (string, error
 	user := &dtos.User{
 		UserDetails: details,
 	}
-	err := service.db.Where("phone_number = ?", details.PhoneNumber).FirstOrCreate(user).Error
+	err := service.db.Where(constants.PhoneNumberQuery, details.PhoneNumber).FirstOrCreate(user).Error
 	if err != nil {
 		logrus.Error("Couldn't find user: ", err.Error())
 		return "", err

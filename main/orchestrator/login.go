@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
+	"qna/main/constants"
 	"qna/main/dtos"
 	"qna/main/services"
 	"qna/main/utils"
@@ -24,8 +25,8 @@ func NewLoginOrchestrator(otpService services.IOtpService, userService services.
 }
 
 func (orch *LoginOrchestrator) Handle(r *mux.Router) {
-	utils.Instrument(r, "/login", orch.login).Methods(http.MethodPost)
-	utils.Instrument(r, "/verify-otp", orch.verifyOtp).Methods(http.MethodPost)
+	utils.Instrument(r, constants.LoginEp, orch.login).Methods(http.MethodPost)
+	utils.Instrument(r, constants.VerifyOtpEp, orch.verifyOtp).Methods(http.MethodPost)
 }
 
 func (orch *LoginOrchestrator) login(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +75,7 @@ func (orch *LoginOrchestrator) verifyOtp(w http.ResponseWriter, r *http.Request)
 
 	userDetails, err := orch.otpService.ValidateOtp(otpResult.PhoneNumber, otpResult.Otp)
 	if err != nil {
-		if err.Error() == services.InvalidOtp {
+		if err == constants.InvalidOtpError {
 			http.Error(w, "Invalid OTP", http.StatusUnauthorized)
 			return
 		}

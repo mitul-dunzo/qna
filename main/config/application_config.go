@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/gorilla/mux"
 	"qna/main/clients"
+	"qna/main/constants"
 	"qna/main/orchestrator"
 	"qna/main/services"
 )
@@ -30,13 +31,13 @@ func InitializeApp() func(mux *mux.Router) {
 	return func(mux *mux.Router) {
 		mux.Use(authMiddleware.Check)
 
-		loginRouter := mux.PathPrefix("/auth").Subrouter()
+		loginRouter := mux.PathPrefix(constants.AuthPrefix).Subrouter()
 		loginOrchestrator.Handle(loginRouter)
 
-		questionRouter := mux.PathPrefix("/questions").Subrouter()
+		questionRouter := mux.PathPrefix(constants.QuestionsPrefix).Subrouter()
 		questionOrch.Handle(questionRouter)
 
-		voteRouter := mux.PathPrefix("/vote").Subrouter()
+		voteRouter := mux.PathPrefix(constants.VotePrefix).Subrouter()
 		voteOrch.Handle(voteRouter)
 	}
 }

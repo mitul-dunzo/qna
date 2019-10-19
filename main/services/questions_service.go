@@ -1,9 +1,9 @@
 package services
 
 import (
-	"errors"
 	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
+	"qna/main/constants"
 	"qna/main/dtos"
 )
 
@@ -26,7 +26,7 @@ func (service *QuestionService) GetQuestions(page int) *[]dtos.Question {
 func (service *QuestionService) AddQuestion(q *dtos.Question, userId uint) (*dtos.Question, error) {
 
 	if !service.canUserAsk(userId) {
-		return nil, errors.New("user doesn't have enough votes")
+		return nil, constants.NotEnoughVotesError
 	}
 
 	q.UserId = userId
@@ -51,16 +51,16 @@ func (service *QuestionService) GetQuestion(id uint) (*dtos.Question, error) {
 }
 
 func (service *QuestionService) canUserAsk(id uint) bool {
-	db := service.db.Where("upvoted_user_id = ?", id)
+	db := service.db.Where(constants.UpvotedUserIdQuery, id)
 	var upvoteCount int
-	err := db.Where("vote = ?", dtos.Upvote).Find(&dtos.Vote{}).Count(&upvoteCount).Error
+	err := db.Where(constants.VoteQuery, constants.Upvote).Find(&dtos.Vote{}).Count(&upvoteCount).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logrus.Error("Couldn't fetch upvotes: ", err.Error())
 		return false
 	}
 
 	var downvoteCount int
-	err = db.Where("vote = ?", dtos.Downvote).Find(&dtos.Vote{}).Count(&downvoteCount).Error
+	err = db.Where(constants.VoteQuery, constants.Downvote).Find(&dtos.Vote{}).Count(&downvoteCount).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logrus.Error("Couldn't fetch downvotes: ", err.Error())
 		return false

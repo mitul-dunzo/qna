@@ -1,9 +1,9 @@
 package services
 
 import (
-	"errors"
 	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
+	"qna/main/constants"
 	"qna/main/dtos"
 )
 
@@ -19,17 +19,17 @@ func NewVoteService(db *gorm.DB) VoteService {
 
 func (s *VoteService) validateVote(vote int) (string, error) {
 	if vote == 1 {
-		return dtos.Upvote, nil
+		return constants.Upvote, nil
 	} else if vote == -1 {
-		return dtos.Downvote, nil
+		return constants.Downvote, nil
 	}
-	return "", errors.New("invalid vote")
+	return "", constants.InvalidVoteError
 }
 
 func (s *VoteService) VoteQuestion(q *dtos.Question, v int, userId uint) error {
 	if userId == q.UserId {
 		logrus.Error("Voting on your question")
-		return errors.New("can't vote on your question")
+		return constants.VotingOnOwnQuestionError
 	}
 
 	voteId, err := s.validateVote(v)
@@ -38,10 +38,9 @@ func (s *VoteService) VoteQuestion(q *dtos.Question, v int, userId uint) error {
 		return err
 	}
 
-	logrus.Debug("q user id: ", q.UserId)
 	vote := dtos.Vote{
 		UpvotedUserId: q.UserId,
-		Type:          "ques",
+		Type:          constants.QuesVote,
 		EntityId:      q.ID,
 		Vote:          voteId,
 	}
@@ -57,7 +56,7 @@ func (s *VoteService) VoteQuestion(q *dtos.Question, v int, userId uint) error {
 func (s *VoteService) VoteAnswer(a *dtos.Answer, v int, userId uint) error {
 	if userId == a.UserId {
 		logrus.Error("Voting on your answer")
-		return errors.New("can't vote on your answer")
+		return constants.VotingOnOwnAnswerError
 	}
 
 	voteId, err := s.validateVote(v)
@@ -68,7 +67,7 @@ func (s *VoteService) VoteAnswer(a *dtos.Answer, v int, userId uint) error {
 
 	vote := dtos.Vote{
 		UpvotedUserId: a.UserId,
-		Type:          "ans",
+		Type:          constants.AnsVote,
 		EntityId:      a.ID,
 		Vote:          voteId,
 	}

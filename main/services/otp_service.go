@@ -1,10 +1,10 @@
 package services
 
 import (
-	"errors"
 	r "github.com/go-redis/redis"
 	"github.com/sirupsen/logrus"
 	"qna/main/clients"
+	"qna/main/constants"
 	"qna/main/dtos"
 	"time"
 )
@@ -19,8 +19,6 @@ type OtpService struct {
 	smsClient      clients.ISmsClient
 	randNumService IRandNumService
 }
-
-const InvalidOtp = "invalid otp"
 
 func NewOtpService(redis *r.Client, smsClient clients.ISmsClient, randNumService IRandNumService) IOtpService {
 	return &OtpService{
@@ -54,8 +52,6 @@ func (service *OtpService) SendOtp(details *dtos.UserDetails) error {
 		return err
 	}
 
-	logrus.Debug("OTP is ", otp)
-
 	return nil
 }
 
@@ -68,8 +64,7 @@ func (service *OtpService) ValidateOtp(phoneNumber string, otp string) (*dtos.Us
 	}
 
 	if otp != details.Otp {
-		logrus.Error("OTP didn't match")
-		return nil, errors.New(InvalidOtp)
+		return nil, constants.InvalidOtpError
 	}
 
 	return details.UserDetails, nil

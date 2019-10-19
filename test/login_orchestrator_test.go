@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/suite"
 	"net/http"
+	"qna/main/constants"
 	"qna/main/orchestrator"
 	"qna/test/mocks"
 	"qna/test/utils"
@@ -47,7 +48,8 @@ func (suite *LoginOrchestratorTestSuite) TestLogin() {
 
 	suite.otpService.EXPECT().SendOtp(details).Return(nil).Times(1)
 
-	w := utils.SendPostRequest(suite.router, "/auth/login", details)
+	loginUrl := constants.AuthPrefix + constants.LoginEp
+	w := utils.SendPostRequest(suite.router, loginUrl, details)
 
 	suite.Equal(w.Code, http.StatusOK)
 }
@@ -60,7 +62,8 @@ func (suite *LoginOrchestratorTestSuite) TestVerifyOtp() {
 	suite.otpService.EXPECT().ValidateOtp(requestParams.PhoneNumber, requestParams.Otp).Return(userDetails, nil).Times(1)
 	suite.userService.EXPECT().CreateUser(userDetails).Return(jwt, nil).Times(1)
 
-	w := utils.SendPostRequest(suite.router, "/auth/verify-otp", requestParams)
+	verifyOtpUrl := constants.AuthPrefix + constants.VerifyOtpEp
+	w := utils.SendPostRequest(suite.router, verifyOtpUrl, requestParams)
 
 	suite.Equal(w.Code, http.StatusOK)
 
