@@ -12,11 +12,11 @@ import (
 )
 
 type LoginOrchestrator struct {
-	otpService  *services.OtpService
-	userService *services.UserService
+	otpService  services.IOtpService
+	userService services.IUserService
 }
 
-func NewLoginOrchestrator(otpService *services.OtpService, userService *services.UserService) LoginOrchestrator {
+func NewLoginOrchestrator(otpService services.IOtpService, userService services.IUserService) LoginOrchestrator {
 	return LoginOrchestrator{
 		otpService:  otpService,
 		userService: userService,

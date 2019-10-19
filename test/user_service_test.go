@@ -18,7 +18,7 @@ type UserServiceTestSuite struct {
 	db         *gorm.DB
 	dbMocker   sqlmock.Sqlmock
 	jwtService *mocks.MockIJwtService
-	service    services.UserService
+	service    services.IUserService
 }
 
 func (suite *UserServiceTestSuite) SetupTest() {

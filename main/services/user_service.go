@@ -6,13 +6,17 @@ import (
 	"qna/main/dtos"
 )
 
+type IUserService interface {
+	CreateUser(details *dtos.UserDetails) (string, error)
+}
+
 type UserService struct {
 	db  *gorm.DB
 	jwt IJwtService
 }
 
-func NewUserService(db *gorm.DB, jwt IJwtService) UserService {
-	return UserService{
+func NewUserService(db *gorm.DB, jwt IJwtService) IUserService {
+	return &UserService{
 		db:  db,
 		jwt: jwt,
 	}

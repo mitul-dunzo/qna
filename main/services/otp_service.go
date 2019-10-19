@@ -9,6 +9,11 @@ import (
 	"time"
 )
 
+type IOtpService interface {
+	SendOtp(details *dtos.UserDetails) error
+	ValidateOtp(phoneNumber string, otp string) (*dtos.UserDetails, error)
+}
+
 type OtpService struct {
 	redis          *r.Client
 	smsClient      clients.ISmsClient
@@ -17,8 +22,8 @@ type OtpService struct {
 
 const InvalidOtp = "invalid otp"
 
-func NewOtpService(redis *r.Client, smsClient clients.ISmsClient, randNumService IRandNumService) OtpService {
-	return OtpService{
+func NewOtpService(redis *r.Client, smsClient clients.ISmsClient, randNumService IRandNumService) IOtpService {
+	return &OtpService{
 		redis:          redis,
 		smsClient:      smsClient,
 		randNumService: randNumService,

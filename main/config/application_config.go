@@ -21,7 +21,7 @@ func InitializeApp() func(mux *mux.Router) {
 	answerService := services.NewAnswerService(db)
 	voteService := services.NewVoteService(db)
 
-	loginOrchestrator := orchestrator.NewLoginOrchestrator(&otpService, &userService)
+	loginOrchestrator := orchestrator.NewLoginOrchestrator(otpService, userService)
 	authMiddleware := orchestrator.NewAuthenticationMiddleware(jwtService)
 	questionOrch := orchestrator.NewQuestionOrchestrator(&questionService, &answerService)
 

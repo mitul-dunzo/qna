@@ -10,7 +10,7 @@ import (
 type JwtServiceTestSuite struct {
 	suite.Suite
 	ctrl    *gomock.Controller
-	service services.JwtService
+	service services.IJwtService
 }
 
 func (suite *JwtServiceTestSuite) SetupTest() {
@@ -18,6 +18,7 @@ func (suite *JwtServiceTestSuite) SetupTest() {
 
 func (suite *JwtServiceTestSuite) BeforeTest(suiteName, testName string) {
 	suite.ctrl = gomock.NewController(suite.T())
+	suite.service = services.NewJwtService()
 }
 
 func (suite *JwtServiceTestSuite) AfterTest(suiteName, testName string) {

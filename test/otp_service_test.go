@@ -19,7 +19,7 @@ type OtpServiceTestSuite struct {
 	randNumService *mocks.MockIRandNumService
 	redis          *redis.Client
 	miniRedis      *miniredis.Miniredis
-	service        services.OtpService
+	service        services.IOtpService
 }
 
 func (suite *OtpServiceTestSuite) SetupTest() {
