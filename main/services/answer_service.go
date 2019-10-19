@@ -35,7 +35,7 @@ func (service *AnswerService) GetAnswer(id uint) (*dtos.Answer, error) {
 	ans := dtos.Answer{
 		ID: id,
 	}
-	err := service.db.First(ans, ans).Error
+	err := service.db.First(&ans, ans).Error
 	if err != nil {
 		logrus.Error("Couldn't find answer: ", err.Error())
 		return nil, err

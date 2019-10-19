@@ -66,5 +66,5 @@ func (service *QuestionService) canUserAsk(id uint) bool {
 		return false
 	}
 
-	return (2*upvoteCount)-downvoteCount >= 20
+	return (2*upvoteCount)-downvoteCount >= 5
 }
