@@ -4,6 +4,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
 	"qna/main/services"
+	"qna/test/utils"
 	"testing"
 )
 
@@ -30,7 +31,7 @@ func TestJwtServiceTestSuite(t *testing.T) {
 }
 
 func (suite *JwtServiceTestSuite) TestService() {
-	var userId uint = 1234
+	userId := utils.NewMockUserID()
 	token, err := suite.service.CreateToken(userId)
 	suite.Nil(err)
 

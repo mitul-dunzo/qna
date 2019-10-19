@@ -5,9 +5,9 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
-	"qna/main/dtos"
 	"qna/main/services"
 	"qna/test/mocks"
+	"qna/test/utils"
 	"testing"
 	"time"
 )
@@ -43,35 +43,24 @@ func TestOtpServiceTestSuite(t *testing.T) {
 }
 
 func (suite *OtpServiceTestSuite) TestSendOtp() {
-	userDetails := dtos.UserDetails{
-		PhoneNumber: "9876543210",
-		Name:        "Test User",
-		Email:       "Test@dunzo.in",
-	}
-	otp := "1234"
+	userDetails := utils.NewMockUserDetails()
+	otp := utils.NewMockOtp()
 
 	suite.randNumService.EXPECT().GetRandNum().Return(otp, nil).Times(1)
 	suite.smsClient.EXPECT().SendOtpSms(otp, userDetails.PhoneNumber).Return(nil).Times(1)
 
-	err := suite.service.SendOtp(&userDetails)
+	err := suite.service.SendOtp(userDetails)
 	suite.Nil(err)
 }
 
 func (suite *OtpServiceTestSuite) TestValidateOtp() {
-	otp := "1234"
-	userDetails := dtos.UserDetails{
-		PhoneNumber: "9876543210",
-		Name:        "Test User",
-		Email:       "Test@dunzo.in",
-	}
-	otpDetails := dtos.UserOtp{
-		UserDetails: &userDetails,
-		Otp:         otp,
-	}
+	otp := utils.NewMockOtp()
+	userDetails := utils.NewMockUserDetails()
+	userOtp := utils.NewMockUserOtp()
 
-	_ = suite.redis.Set(userDetails.PhoneNumber, otpDetails, 3*time.Minute)
+	_ = suite.redis.Set(userDetails.PhoneNumber, userOtp, 3*time.Minute)
 	details, err := suite.service.ValidateOtp(userDetails.PhoneNumber, otp)
 
 	suite.Nil(err)
-	suite.Equal(details, &userDetails)
+	suite.Equal(details, userDetails)
 }

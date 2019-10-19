@@ -8,9 +8,9 @@ import (
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"net/http/httptest"
-	"qna/main/dtos"
 	"qna/main/orchestrator"
 	"qna/test/mocks"
+	"qna/test/utils"
 	"testing"
 )
 
@@ -45,13 +45,9 @@ func TestLoginOrchestratorTestSuite(t *testing.T) {
 }
 
 func (suite *LoginOrchestratorTestSuite) TestLogin() {
-	details := dtos.UserDetails{
-		PhoneNumber: "9876543210",
-		Name:        "Test User",
-		Email:       "test@dunzo.in",
-	}
+	details := utils.NewMockUserDetails()
 
-	suite.otpService.EXPECT().SendOtp(&details).Return(nil).Times(1)
+	suite.otpService.EXPECT().SendOtp(details).Return(nil).Times(1)
 
 	data, _ := json.Marshal(details)
 	r, _ := http.NewRequest(http.MethodPost, "/auth/login", bytes.NewBuffer(data))
@@ -63,21 +59,12 @@ func (suite *LoginOrchestratorTestSuite) TestLogin() {
 }
 
 func (suite *LoginOrchestratorTestSuite) TestVerifyOtp() {
-	requestParams := dtos.OtpData{
-		Otp:         "1234",
-		PhoneNumber: "9876543210",
-	}
+	requestParams := utils.NewMockUserOtp()
+	userDetails := utils.NewMockUserDetails()
+	jwt := utils.NewMockJwt()
 
-	userDetails := dtos.UserDetails{
-		PhoneNumber: requestParams.PhoneNumber,
-		Name:        "Test User",
-		Email:       "test@dunzo.in",
-	}
-
-	jwt := "Random jwt string"
-
-	suite.otpService.EXPECT().ValidateOtp(requestParams.PhoneNumber, requestParams.Otp).Return(&userDetails, nil).Times(1)
-	suite.userService.EXPECT().CreateUser(&userDetails).Return(jwt, nil).Times(1)
+	suite.otpService.EXPECT().ValidateOtp(requestParams.PhoneNumber, requestParams.Otp).Return(userDetails, nil).Times(1)
+	suite.userService.EXPECT().CreateUser(userDetails).Return(jwt, nil).Times(1)
 
 	data, _ := json.Marshal(requestParams)
 	r, _ := http.NewRequest(http.MethodPost, "/auth/verify-otp", bytes.NewBuffer(data))
