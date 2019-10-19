@@ -46,8 +46,8 @@ func (suite *UserServiceTestSuite) TestCreateUser() {
 	userDetails := utils.NewMockUserDetails()
 	id := utils.NewMockUserID()
 
-	query := "SELECT * FROM \"users\"  WHERE (phone_number = $1) ORDER BY \"users\".\"id\" ASC LIMIT 1"
-	newRow := sqlmock.NewRows([]string{"id", "name", "phone_number", "email"})
+	query := utils.NewUserQuery()
+	newRow := utils.NewUserTableRow()
 	newRow.AddRow(id, userDetails.Name, userDetails.PhoneNumber, userDetails.Email)
 	suite.dbMocker.ExpectQuery(regexp.QuoteMeta(query)).WithArgs(userDetails.PhoneNumber).WillReturnRows(newRow)
 
