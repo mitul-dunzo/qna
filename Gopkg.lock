@@ -45,22 +45,6 @@
   version = "v3.2.0"
 
 [[projects]]
-  digest = "1:c1c9556001ba5f523a339a9f7a4d31834c7270f77782c2e185c0b24f7827b19b"
-  name = "github.com/dunzoit/dunzo_commons"
-  packages = ["go_commons/common-utils/string_float_utils"]
-  pruneopts = "UT"
-  revision = "1ad431050ce8af47027cbdafb034ca8f509d56c8"
-  version = "v2.1.2"
-
-[[projects]]
-  branch = "master"
-  digest = "1:f29fc5cfb3f306ebf8a247705f28a796dd7339892192beea3e93e0e41c11577d"
-  name = "github.com/dunzoit/payment-orchestrator-service"
-  packages = ["src/main/dtos/common"]
-  pruneopts = "UT"
-  revision = "bbead558fde2b29b781779d5b925b35fae28e51c"
-
-[[projects]]
   digest = "1:61a8ca58fee5891ccd5e9e0503d3cb0636fe15505a7b758d51fe38d38bfce32f"
   name = "github.com/go-redis/redis"
   packages = [
@@ -240,7 +224,6 @@
     "github.com/DATA-DOG/go-sqlmock",
     "github.com/alicebob/miniredis",
     "github.com/dgrijalva/jwt-go",
-    "github.com/dunzoit/payment-orchestrator-service/src/main/dtos/common",
     "github.com/go-redis/redis",
     "github.com/golang/mock/gomock",
     "github.com/gorilla/handlers",
