@@ -17,7 +17,7 @@ func SetupNewRelic() {
 	config := newrelic.NewConfig(appName, license)
 	logrus.SetLevel(logrus.DebugLevel)
 	config.Logger = nrlogrus.StandardLogger()
-	config.Enabled = false
+	config.Enabled = true
 	app, err := newrelic.NewApplication(config)
 	if err != nil {
 		logrus.Fatal("Failed to connect to NewRelic with error: ", err.Error())
